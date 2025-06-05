@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>销售话术管理助手</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  
+  <!-- 配置Tailwind颜色和字体 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FFF380',       // 主黄色
+            secondary: '#FFD700',     // 深黄色
+            accent: '#FFB340',        // 强调色
+            neutral: '#F8F4E3',       // 中性背景
+            'glass-overlay': 'rgba(255, 243, 128, 0.3)', // 玻璃态覆盖层
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .glass-effect {
+        backdrop-filter: blur(12px);
+        background-color: var(--glass, rgba(255, 255, 255, 0));
+        @apply border border-white/20 shadow-lg;
+      }
+      .card-hover {
+        @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+      }
+      .text-balance {
+        text-wrap: balance;
+      }
+    }
+  </style>
+  
+  <style>
+    /* 玻璃态背景变量 */
+    :root {
+      --glass: rgba(255, 243, 128, 0.3);
+    }
+    
+    /* 滚动条样式 */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 215, 0, 0.5);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 215, 0, 0.7);
+    }
+    
+    /* 动画效果 */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* 卡片悬停动画 */
+    .card {
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(255, 215, 0, 0.3);
+    }
+  </style>
+</head>
+
+<body class="font-inter bg-neutral min-h-screen flex flex-col">
+  <!-- 顶部导航栏 - 玻璃态效果 -->
+  <header class="glass-effect fixed top-0 left-0 right-0 z-50 border-b border-white/10">
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+      <!-- 左侧logo和标题 -->
+      <div class="flex items-center space-x-2">
+        <div class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center text-primary shadow-md">
+          <i class="fa fa-commenting-o text-xl"></i>
+        </div>
+        <h1 class="text-xl font-bold text-gray-800">销售话术管理助手</h1>
+      </div>
+      
+      <!-- 中间搜索栏 -->
+      <div class="hidden md:flex flex-1 max-w-md mx-8">
+        <div class="relative w-full">
+          <input type="text" placeholder="搜索话术..." 
+                 class="w-full py-2 pl-10 pr-4 rounded-full bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-secondary/50">
+          <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        </div>
+      </div>
+      
+      <!-- 右侧用户菜单 -->
+      <div class="flex items-center space-x-4">
+        <button class="p-2 rounded-full hover:bg-white/20 transition-colors relative">
+          <i class="fa fa-bell-o text-gray-600"></i>
+          <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+        <div class="flex items-center space-x-2">
+          <img src="https://picsum.photos/id/64/40/40" alt="用户头像" class="w-8 h-8 rounded-full object-cover border-2 border-secondary">
+          <span class="hidden md:inline text-sm font-medium text-gray-700">张销售</span>
+          <i class="fa fa-angle-down text-gray-400"></i>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="flex-1 pt-16 flex">
+    <!-- 侧边栏导航 -->
+    <aside class="w-64 fixed left-0 top-16 bottom-0 glass-effect border-r border-white/10 z-40 overflow-y-auto">
+      <nav class="p-4">
+        <div class="mb-6">
+          <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">主导航</h2>
+          <ul class="space-y-1">
+            <li>
+              <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-secondary/20 text-gray-800 font-medium">
+                <i class="fa fa-list-alt w-5 text-center"></i>
+                <span>话术管理</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-white/20 transition-colors">
+                <i class="fa fa-tags w-5 text-center"></i>
+                <span>分类管理</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-white/20 transition-colors">
+                <i class="fa fa-bar-chart w-5 text-center"></i>
+                <span>效果分析</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-white/20 transition-colors">
+                <i class="fa fa-users w-5 text-center"></i>
+                <span>团队共享</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        
+        <div>
+          <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">我的收藏</h2>
+          <ul class="space-y-1">
+            <li>
+              <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-white/20 transition-colors">
+                <i class="fa fa-star-o w-5 text-center text-yellow-400"></i>
+                <span>开场白大全</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-white/20 transition-colors">
+                <i class="fa fa-star-o w-5 text-center text-yellow-400"></i>
+                <span>异议处理话术</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- 主内容 - 话术管理 -->
+    <div class="flex-1 ml-64 p-6 overflow-x-hidden">
+      <!-- 页面标题和操作按钮 -->
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        <div>
+          <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-gray-800">我的销售话术</h2>
+          <p class="text-gray-500">管理和优化你的销售沟通话术</p>
+        </div>
+        <div class="flex space-x-3">
+          <button class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-2">
+            <i class="fa fa-filter"></i>
+            <span>筛选</span>
+          </button>
+          <button class="px-4 py-2 rounded-lg bg-secondary text-gray-800 font-medium hover:bg-secondary/90 transition-colors flex items-center space-x-2 shadow-md">
+            <i class="fa fa-plus"></i>
+            <span>添加话术</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- 数据统计卡片 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="glass-effect p-5 rounded-xl card">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-gray-500 text-sm">总话术数</p>
+              <h3 class="text-2xl font-bold text-gray-800 mt-1">128</h3>
+            </div>
+            <div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+              <i class="fa fa-file-text-o text-xl"></i>
+            </div>
+          </div>
+          <div class="mt-3 flex items-center text-sm text-green-500">
+            <i class="fa fa-arrow-up mr-1"></i>
+            <span>12% 较上月</span>
+          </div>
+        </div>
+        
+        <div class="glass-effect p-5 rounded-xl card">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-gray-500 text-sm">常用话术</p>
+              <h3 class="text-2xl font-bold text-gray-800 mt-1">36</h3>
+            </div>
+            <div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+              <i class="fa fa-star-o text-xl"></i>
+            </div>
+          </div>
+          <div class="mt-3 flex items-center text-sm text-green-500">
+            <i class="fa fa-arrow-up mr-1"></i>
+            <span>8% 较上月</span>
+          </div>
+        </div>
+        
+        <div class="glass-effect p-5 rounded-xl card">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-gray-500 text-sm">本月新增</p>
+              <h3 class="text-2xl font-bold text-gray-800 mt-1">15</h3>
+            </div>
+            <div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+              <i class="fa fa-calendar-plus-o text-xl"></i>
+            </div>
+          </div>
+          <div class="mt-3 flex items-center text-sm text-red-500">
+            <i class="fa fa-arrow-down mr-1"></i>
+            <span>2% 较上月</span>
+          </div>
+        </div>
+        
+        <div class="glass-effect p-5 rounded-xl card">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-gray-500 text-sm">转化率</p>
+              <h3 class="text-2xl font-bold text-gray-800 mt-1">68%</h3>
+            </div>
+            <div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+              <i class="fa fa-percent text-xl"></i>
+            </div>
+          </div>
+          <div class="mt-3 flex items-center text-sm text-green-500">
+            <i class="fa fa-arrow-up mr-1"></i>
+            <span>5% 较上月</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 搜索和筛选区域 -->
+      <div class="glass-effect p-4 rounded-xl mb-6 border border-white/10">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div class="flex-1 max-w-md">
+            <div class="relative">
+              <input type="text" placeholder="搜索话术标题、内容..." 
+                     class="w-full py-2 pl-10 pr-4 rounded-lg bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-secondary/50">
+              <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            </div>
+          </div>
+          
+          <div class="flex flex-wrap gap-2">
+            <div class="relative">
+              <select class="appearance-none bg-white/20 border border-white/30 text-gray-700 py-2 px-4 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/50">
+                <option>所有分类</option>
+                <option>开场白</option>
+                <option>产品介绍</option>
+                <option>异议处理</option>
+                <option>促成交易</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                <i class="fa fa-chevron-down text-xs"></i>
+              </div>
+            </div>
+            
+            <div class="relative">
+              <select class="appearance-none bg-white/20 border border-white/30 text-gray-700 py-2 px-4 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/50">
+                <option>所有状态</option>
+                <option>已启用</option>
+                <option>待优化</option>
+                <option>已停用</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                <i class="fa fa-chevron-down text-xs"></i>
+              </div>
+            </div>
+            
+            <button class="px-4 py-2 rounded-lg bg-secondary text-gray-800 font-medium hover:bg-secondary/90 transition-colors">
+              搜索
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 话术列表 -->
+      <div class="space-y-4">
+        <!-- 话术卡片1 -->
+        <div class="glass-effect p-5 rounded-xl card">
+          <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-semibold text-gray-800">产品优势开场白</h3>
+                <div class="flex space-x-1">
+                  <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">开场白</span>
+                  <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">热门</span>
+                </div>
+              </div>
+              <p class="text-gray-600 mb-4 line-clamp-2">您好，我是XX公司的销售代表。我们最新推出的产品具有行业领先的技术优势，能够帮助您的企业提升30%的运营效率，同时降低20%的成本...</p>
+              
+              <div class="flex flex-wrap items-center justify-between gap-3 text-sm text-gray-500">
+                <div class="flex items-center space-x-3">
+                  <div class="flex items-center">
+                    <i class="fa fa-eye mr-1"></i>
+                    <span>128次</span>
+                  </div>
+                  <div class="flex items-center">
+                    <i class="fa fa-star text-yellow-400 mr-1"></i>
+                    <span>4.8</span>
+                  </div>
+                  <div class="flex items-center">
+                    <i class="fa fa-calendar mr-1"></i>
+                    <span>2025-05-15</span>
+                  </div>
+                </div>
+                <div class="flex space-x-2">
+                  <button class="p-2 rounded hover:bg-gray-100 transition-colors" title="编辑">
+                    <i class="fa fa-pencil text-gray-600"></i>
+                  </button>
+                  <button class="p-2 rounded hover:bg-gray-100 transition-colors" title="复制">
+                    <i class="fa fa-copy text-gray-600"></i>
+                  </button>
+                  <button class="p-2 rounded hover:bg-gray-100 transition-colors" title="收藏">
+                    <i class="fa fa-star-o text-gray-600"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="md:w-64 flex flex-col space-y-3">
+              <div class="glass-effect p-3 rounded-lg">
+                <h4 class="text-sm font-medium text-gray-700 mb-2">使用数据</h4>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-600">转化率</span>
+                  <span class="font-semibold text-green-600">72%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div class="bg-green-500 h-2 rounded-full" style="width: 72%"></div>
+                </div>
+              </div>
+              
+              <button class="w-full py-2 rounded-lg bg-secondary text-gray-800 font-medium hover:bg-secondary/90 transition-colors shadow-md">
+                复制使用
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 话术卡片2 -->
+        <div class="glass-effect p-5 rounded-xl card">
+          <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-semibold text-gray-800">价格异议处理话术</h3>
+                <div class="flex space-x-1">
+                  <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">异议处理</span>
+                  <span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">待优化</span>
+                </div>
+              </div>
+              <p class="text-gray-600 mb-4 line-clamp-2">我完全理解您对价格的关注。不过，您是否考虑过我们产品的长期价值呢？虽然初次投资稍高，但我们的产品寿命是同类产品的2倍，而且提供5年免费维护，算下来每天的成本其实更低...</p>
+              
+              <div class="flex flex-wrap items-center justify-between gap-3 text-sm text-gray-500">
+                <div class="flex items-center space-x-3">
+                  <div class="flex items-center">
+                    <i class="fa fa-eye mr-1"></i>
+                    <span>96次</span>
+                  </div>
+                  <div class="flex items-center">
+                    <i class="fa fa-star text-yellow-400 mr-1"></i>
+                    <span>4.2</span>
+                  </div>
+                  <div class="flex items-center">
+                    <i class="fa fa-calendar mr-1"></i>
+                    <span>2025-04-28</span>
+                  </div>
+                </div>
+                <div class="flex space-x-2">
+                  <button class="p-2 rounded hover:bg-gray-100 transition-colors" title="编辑">
+                    <i class="fa fa-pencil text-gray-600"></i>
+                  </button>
+                  <button class="p-2 rounded hover:bg-gray-100 transition-colors" title="复制">
+                    <i class="fa fa-copy text-gray-600"></i>
+                  </button>
+                  <button class="p-2 rounded hover:bg-gray-100 transition-colors" title="收藏">
+                    <i class="fa fa-star-o text-gray-600"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="md:w-64 flex flex-col space-y-3">
+              <div class="glass-effect p-3 rounded-lg">
+                <h4 class="text-sm font-medium text-gray-700 mb-2">使用数据</h4>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-600">转化率</span>
+                  <span class="font-semibold text-yellow-500">58%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div class="bg-yellow-500 h-2 rounded-full" style="width: 58%"></div>
+                </div>
+              </div>
+              
+              <button class="w-full py-2 rounded-lg bg-secondary text-gray-800 font-medium hover:bg-secondary/90 transition-colors shadow-md">
+                复制使用
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 话术卡片3 -->
+        <div class="glass-effect p-5 rounded-xl card">
+          <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-semibold text-gray-800">售后服务承诺话术</h3>
+                <div class="flex space-x-1">
+                  <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">产品介绍</span>
+                  <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">已启用</span>
+                </div>
+              </div>
+              <p class="text-gray-600 mb-4 line-clamp-2">我们非常重视客户的使用体验，因此提供业内最完善的售后服务。所有产品均享受3年免费保修，24小时技术支持响应，并且每年提供一次免费设备维护服务，确保您的使用无忧...</p>
+              
+              <div class="flex flex-wrap items-center justify-between gap-3 text-sm text-gray-500">
+                <div class="flex items-center space-x-3">
+                  <div class="flex items-center">
+                    <i class="fa fa-eye mr-1"></i>
+                    <span>87次</span>
+                  </div>
+                  <div class="flex items-center">
+                    <i class="fa fa-star text-yellow-400 mr-1"></i>
+                    <span>4.5</span>
+                  </div>
+                  <div class="flex items-center">
+                    <i class="fa fa-calendar mr-1"></i>
+                    <span>2025-05-20</span>
+                  </div>
+                </div>
+                <div class="flex space-x-2">
+                  <button class="p-2 rounded hover:bg-gray-100 transition-colors" title="编辑">
+                    <i class="fa fa-pencil text-gray-600"></i>
+                  </button>
+                  <button class="p-2 rounded hover:bg-gray-100 transition-colors" title="复制">
+                    <i class="fa fa-copy text-gray-600"></i>
+                  </button>
+                  <button class="p-2 rounded hover:bg-gray-100 transition-colors" title="收藏">
+                    <i class="fa fa-star-o text-gray-600"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="md:w-64 flex flex-col space-y-3">
+              <div class="glass-effect p-3 rounded-lg">
+                <h4 class="text-sm font-medium text-gray-700 mb-2">使用数据</h4>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-600">转化率</span>
+                  <span class="font-semibold text-green-600">65%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div class="bg-green-500 h-2 rounded-full" style="width: 65%"></div>
+                </div>
+              </div>
+              
+              <button class="w-full py-2 rounded-lg bg-secondary text-gray-800 font-medium hover:bg-secondary/90 transition-colors shadow-md">
+                复制使用
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 话术卡片4 -->
+        <div class="glass-effect p-5 rounded-xl card">
+          <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-semibold text-gray-800">促成交易收尾话术</h3>
+                <div class="flex space-x-1">
+                  <span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">促成交易</span>
+                  <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">已启用</span>
+                </div>
+              </div>
+              <p class="text-gray-600 mb-4 line-clamp-2">看来您对我们的产品已经有了全面的了解，也认可我们的解决方案。现在下单的话，我们还能为您提供一个特别的开业大礼包，包含3个月的免费培训服务。您看是今天安排发货还是明天呢？</p>
+              
+              <div class="flex flex-wrap items-center justify-between gap-3 text-sm text-gray-500">
+                <div class="flex items-center space-x-3">
+                  <div class="flex items-center">
+                    <i class="fa fa-eye mr-1"></i>
+                    <span>112次</span>
+                  </div>
+                  <div class="flex items-center">
+                    <i class="fa fa-star text-yellow-400 mr-1"></i>
+                    <span>4.9</span>
+                  </div>
+                  <div class="flex items-center">
+                    <i class="fa fa-calendar mr-1"></i>
+                    <span>2025-05-05</span>
+                  </div>
+                </div>
+                <div class="flex space-x-2">
+                  <button class="p-2 rounded hover:bg-gray-100 transition-colors" title="编辑">
+                    <i class="fa fa-pencil text-gray-600"></i>
+                  </button>
+                  <button class="p-2 rounded hover:bg-gray-100 transition-colors" title="复制">
+                    <i class="fa fa-copy text-gray-600"></i>
+                  </button>
+                  <button class="p-2 rounded hover:bg-gray-100 transition-colors" title="收藏">
+                    <i class="fa fa-star-o text-gray-600"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="md:w-64 flex flex-col space-y-3">
+              <div class="glass-effect p-3 rounded-lg">
+                <h4 class="text-sm font-medium text-gray-700 mb-2">使用数据</h4>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-600">转化率</span>
+                  <span class="font-semibold text-green-600">78%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div class="bg-green-500 h-2 rounded-full" style="width: 78%"></div>
+                </div>
+              </div>
+              
+              <button class="w-full py-2 rounded-lg bg-secondary text-gray-800 font-medium hover:bg-secondary/90 transition-colors shadow-md">
+                复制使用
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 分页 -->
+      <div class="flex items-center justify-between mt-8">
+        <p class="text-sm text-gray-500">显示 1-4 条，共 24 条</p>
+        <div class="flex space-x-1">
+          <button class="w-10 h-10 rounded-lg bg-white/20 border border-white/30 flex items-center justify-center text-gray-600 hover:bg-white/30 transition-colors disabled:opacity-50" disabled>
+            <i class="fa fa-angle-left"></i>
+          </button>
+          <button class="w-10 h-10 rounded-lg bg-secondary text-gray-800 flex items-center justify-center font-medium">1</button>
+          <button class="w-10 h-10 rounded-lg bg-white/20 border border-white/30 flex items-center justify-center text-gray-600 hover:bg-white/30 transition-colors">2</button>
+          <button class="w-10 h-10 rounded-lg bg-white/20 border border-white/30 flex items-center justify-center text-gray-600 hover:bg-white/30 transition-colors">3</button>
+          <button class="w-10 h-10 rounded-lg bg-white/20 border border-white/30 flex items-center justify-center text-gray-600 hover:bg-white/30 transition-colors">4</button>
+          <button class="w-10 h-10 rounded-lg bg-white/20 border border-white/30 flex items-center justify-center text-gray-600 hover:bg-white/30 transition-colors">5</button>
+          <button class="w-10 h-10 rounded-lg bg-white/20 border border-white/30 flex items-center justify-center text-gray-600 hover:bg-white/30 transition-colors">
+            <i class="fa fa-angle-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 底部状态栏 -->
+  <footer class="glass-effect border-t border-white/10 py-3 px-6">
+    <div class="container mx-auto flex flex-col md:flex-row md:items-center md:justify-between">
+      <p class="text-sm text-gray-500">© 2025 销售话术管理助手. 保留所有权利.</p>
+      <div class="flex space-x-4 mt-2 md:mt-0">
+        <a href="#" class="text-gray-500 hover:text-gray-700 transition-colors">
+          <i class="fa fa-question-circle"></i> 帮助
+        </a>
+        <a href="#" class="text-gray-500 hover:text-gray-700 transition-colors">
+          <i class="fa fa-cog"></i> 设置
+        </a>
+        <a href="#" class="text-gray-500 hover:text-gray-700 transition-colors">
+          <i class="fa fa-sign-out"></i> 退出
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 添加话术模态框 (默认隐藏) -->
+  <div id="addDialog" class="fixed inset-0 z-50 flex items-center justify-center hidden fade-in">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="dialogOverlay"></div>
+    <div class="relative bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto glass-effect border border-white/20">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-gray-800">添加新话术</h3>
+          <button id="closeDialog" class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+            <i class="fa fa-times text-gray-600"></i>
+          </button>
+        </div>
+        
+        <form>
+          <div class="mb-4">
+            <label for="title" class="block text-sm font-medium text-gray-700 mb-1">话术标题</label>
+            <input type="text" id="title" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary/50" placeholder="输入话术标题">
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label for="category" class="block text-sm font-medium text-gray-700 mb-1">分类</label>
+              <select id="category" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary/50">
+                <option>开场白</option>
+                <option>产品介绍</option>
+                <option>异议处理</option>
+                <option>促成交易</option>
+                <option>售后服务</option>
+              </select>
+            </div>
+            <div>
+              <label for="rating" class="block text-sm font-medium text-gray-700 mb-1">星级评分</label>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400 cursor-pointer hover:text-yellow-500" data-rating="1"></i>
+                <i class="fa fa-star text-yellow-400 cursor-pointer hover:text-yellow-500" data-rating="2"></i>
+                <i class="fa fa-star text-yellow-400 cursor-pointer hover:text-yellow-500" data-rating="3"></i>
+                <i class="fa fa-star text-yellow-400 cursor-pointer hover:text-yellow-500" data-rating="4"></i>
+                <i class="fa fa-star text-yellow-400 cursor-pointer hover:text-yellow-500" data-rating="5"></i>
+                <span id="ratingValue" class="ml-2 text-gray-600">0</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <label for="content" class="block text-sm font-medium text-gray-700 mb-1">话术内容</label>
+            <textarea id="content" rows="8" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary/50" placeholder="输入详细的话术内容..."></textarea>
+          </div>
+          
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">标签 (可选)</label>
+            <div class="flex flex-wrap gap-2">
+              <input type="text" placeholder="添加标签" class="flex-1 min-w-[120px] px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary/50">
+              <button class="px-3 py-2 bg-primary text-gray-800 rounded-lg hover:bg-primary/90 transition-colors">
+                <i class="fa fa-plus"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="flex justify-end space-x-3 mt-6">
+            <button type="button" id="cancelDialog" class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors">
+              取消
+            </button>
+            <button type="submit" class="px-4 py-2 rounded-lg bg-secondary text-gray-800 font-medium hover:bg-secondary/90 transition-colors shadow-md">
+              保存话术
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 模态框交互
+    document.addEventListener('DOMContentLoaded', function() {
+      const addDialog = document.getElementById('addDialog');
+      const closeDialog = document.getElementById('closeDialog');
+      const cancelDialog = document.getElementById('cancelDialog');
+      const dialogOverlay = document.getElementById('dialogOverlay');
+      const addButton = document.querySelector('button:contains("添加话术")');
+      
+      // 打开模态框
+      if (addButton) {
+        addButton.addEventListener('click', function() {
+          addDialog.classList.remove('hidden');
+          document.body.style.overflow = 'hidden'; // 防止背景滚动
+        });
+      }
+      
+      // 关闭模态框
+      function closeDialogFunc() {
+        addDialog.classList.add('hidden');
+        document.body.style.overflow = ''; // 恢复背景滚动
+      }
+      
+      if (closeDialog) closeDialog.addEventListener('click', closeDialogFunc);
+      if (cancelDialog) cancelDialog.addEventListener('click', closeDialogFunc);
+      if (dialogOverlay) dialogOverlay.addEventListener('click', closeDialogFunc);
+      
+      // 星级评分交互
+      const stars = document.querySelectorAll('[data-rating]');
+      const ratingValue = document.getElementById('ratingValue');
+      
+      if (stars && ratingValue) {
+        stars.forEach(star => {
+          star.addEventListener('click', function() {
+            const rating = parseInt(this.getAttribute('data-rating'));
+            stars.forEach((s, i) => {
+              if (i < rating) {
+                s.classList.add('text-yellow-500');
+                s.classList.remove('text-yellow-400');
+              } else {
+                s.classList.remove('text-yellow-500');
+                s.classList.add('text-yellow-400');
+              }
+            });
+            ratingValue.textContent = rating;
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>
