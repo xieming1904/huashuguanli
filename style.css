@@ -1,0 +1,266 @@
+/* style.css */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+body {
+    font-family: 'Noto Sans SC', sans-serif;
+    /* Apply a subtle background for depth, can be a gradient or a very light image */
+    background-color: #f3f4f6; /* Tailwind gray-100 as a fallback */
+}
+
+/* Define primary colors as CSS variables for easier use in custom styles if needed */
+:root {
+    --color-primary-light: #FFFBEB;
+    --color-primary: #FACC15;
+    --color-primary-dark: #EAB308;
+    --color-primary-darker: #CA8A04;
+    --color-secondary: #4B5563;
+    --color-accent: #3B82F6;
+}
+
+/* Glassmorphism base class */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.2); /* More translucent white */
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid rgba(209, 213, 219, 0.3); /* Subtle border */
+    border-radius: 0.75rem; /* Tailwind rounded-lg */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Specific Glassmorphism for sidebar - might need different opacity or blur */
+.sidebar-glass {
+    background: rgba(55, 65, 81, 0.6); /* Darker base for sidebar, more translucent */
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Card hover effect */
+.talk-track-card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.talk-track-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+/* Modal transitions (example, Tailwind handles this well with its classes too) */
+.modal-transition {
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+.modal-hidden {
+    opacity: 0;
+    transform: scale(0.95);
+}
+.modal-visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Responsive adjustments for sidebar (example - will primarily use Tailwind classes) */
+/* @media (max-width: 768px) {
+    .sidebar {
+        display: none; // This would be handled by Tailwind's md:flex etc.
+    }
+} */
+
+/* Ensure good contrast for text on yellow backgrounds */
+.text-on-primary {
+    color: #1f2937; /* Tailwind gray-800 for readability */
+}
+.text-on-primary-light {
+     color: #374151; /* Tailwind gray-700 */
+}
+
+/* Custom scrollbar for webkit browsers (optional, for polish) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.05);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--color-primary-dark);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-darker);
+}
+
+/* General focus visible style for accessibility and polish */
+*:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+}
+
+/* Active sidebar link */
+.sidebar-nav-active {
+    background-color: var(--color-primary) !important; /* Use primary yellow */
+    color: var(--color-secondary) !important; /* Darker text for contrast */
+}
+.sidebar-nav-active i {
+    color: var(--color-secondary) !important;
+}
+
+.sidebar-nav-item:hover {
+    background-color: var(--color-primary-dark);
+    color: var(--color-secondary);
+}
+.sidebar-nav-item:hover i {
+     color: var(--color-secondary);
+}
+
+/* Button primary style */
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-secondary); /* Dark text on yellow button */
+    font-weight: 500; /* Medium */
+    transition: background-color 0.2s ease-in-out;
+}
+.btn-primary:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.btn-secondary {
+    background-color: var(--color-secondary);
+    color: white;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+}
+.btn-secondary:hover {
+    background-color: #374151; /* Gray 700 */
+}
+
+.btn-danger {
+    background-color: #EF4444; /* Tailwind red-500 */
+    color: white;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+}
+.btn-danger:hover {
+    background-color: #DC2626; /* Tailwind red-600 */
+}
+
+.btn-edit {
+     background-color: #F59E0B; /* Tailwind amber-500 */
+     color: white;
+     font-weight: 500;
+     transition: background-color 0.2s ease-in-out;
+}
+.btn-edit:hover {
+    background-color: #D97706; /* Tailwind amber-600 */
+}
+
+/* Input and Textarea styling */
+.form-input, .form-textarea {
+    border: 1px solid #D1D5DB; /* Tailwind gray-300 */
+    border-radius: 0.375rem; /* rounded-md */
+    padding: 0.5rem 0.75rem;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.form-input:focus, .form-textarea:focus {
+    border-color: var(--color-primary-dark);
+    box-shadow: 0 0 0 2px var(--color-primary-light); /* Focus ring */
+    outline: none;
+}
+
+/* Header style */
+.header-style {
+    background-color: var(--color-primary-light);
+    /* box-shadow: 0 2px 4px rgba(0,0,0,0.05); */ /* Subtle shadow */
+}
+.header-title {
+    color: var(--color-primary-darker);
+    font-weight: 700; /* Bold */
+}
+
+/* Ensure enough contrast on sidebar with glassmorphism */
+.sidebar-glass a, .sidebar-glass div {
+    color: #F3F4F6; /* Tailwind gray-100 for text on darkish glass */
+}
+.sidebar-glass a:hover {
+    background-color: rgba(255, 250, 205, 0.2); /* Light yellow translucent hover */
+    color: white;
+}
+.sidebar-glass .sidebar-nav-active {
+    background-color: var(--color-primary) !important;
+    color: var(--color-secondary) !important;
+}
+.sidebar-glass .sidebar-nav-active i {
+     color: var(--color-secondary) !important;
+}
+
+/* Add some padding to the main content area for better spacing */
+#talkTrackManagementView > .container,
+#facebookChatView, /* Apply to the direct child of facebookChatView if it's the flex container */
+#dataAnalysisView > .container {
+    padding-top: 1.5rem; /* py-6 */
+    padding-bottom: 1.5rem; /* py-6 */
+}
+
+/* Specific for chat list items to ensure glassmorphism is applied well */
+#customerList li.glass-effect {
+    background: rgba(255, 255, 255, 0.3); /* Lighter for list items */
+}
+#customerList li.bg-gray-300 { /* Active customer */
+    background-color: rgba(250, 204, 21, 0.5) !important; /* primary color with transparency */
+    color: var(--color-secondary);
+}
+
+/* Chat messages for better glassmorphism if desired */
+/* #chatMessages .flex > div {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(209, 213, 219, 0.2);
+}
+#chatMessages .flex.justify-end > div {
+    background: rgba(250, 204, 21, 0.6);
+} */
+
+/* Ensure modal has high z-index */
+#talkTrackModal {
+    z-index: 50;
+}
+
+/* Responsive sidebar toggle button (example, if we decide to implement one) */
+#sidebarToggleBtn {
+    /* Styles for a button that would show/hide sidebar on mobile */
+    /* Usually positioned in the header */
+}
+
+/* Adjust overall font size for mobile if necessary */
+@media (max-width: 640px) {
+    body {
+        font-size: 0.95rem;
+    }
+    /* Example: make chat input smaller on mobile */
+    #chatInput {
+        padding: 0.6rem 1rem; /* Adjust padding */
+    }
+    #sendChatMessageBtn, #selectTalkTrackChatBtn {
+        padding: 0.6rem;
+    }
+    #sendChatMessageBtn i, #selectTalkTrackChatBtn i {
+        font-size: 0.9rem;
+    }
+}
+
+/* Further padding adjustments for smaller screens */
+@media (max-width: 768px) {
+    #talkTrackManagementView > .container,
+    #dataAnalysisView > .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    /* Facebook chat view might need specific padding adjustments for its internal panels */
+    #facebookChatView aside { /* Customer list */
+        padding: 0.75rem;
+    }
+     #facebookChatView section > div { /* Chat header, messages, input */
+        padding: 0.75rem;
+    }
+}
