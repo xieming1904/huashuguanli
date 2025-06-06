@@ -52,12 +52,44 @@
                 <!-- Talk Track Management View -->
                 <div id="talkTrackManagementView">
                     <div class="container mx-auto">
-                        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
+                        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
                             <h2 class="text-2xl font-semibold text-gray-700">我的话术库</h2>
-                            <button id="addTalkTrackBtn" class="btn-primary py-2 px-4 rounded-lg shadow hover:shadow-md flex items-center w-full sm:w-auto justify-center">
+                            <button id="addTalkTrackBtn" class="btn-primary py-2 px-4 rounded-lg shadow hover:shadow-lg flex items-center w-full sm:w-auto justify-center transition-shadow duration-200">
                                 <i class="fas fa-plus mr-2"></i>添加新话术
                             </button>
                         </div>
+
+                        <!-- Search and Filter Controls -->
+                        <div class="mb-6 p-4 glass-effect rounded-lg shadow">
+                            <div class="flex flex-col md:flex-row gap-4 items-center">
+                                <div class="flex-grow w-full md:w-auto">
+                                    <label for="searchTalkTracks" class="sr-only">搜索话术</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-search text-gray-400"></i>
+                                        </div>
+                                        <input type="search" id="searchTalkTracks" placeholder="搜索标题、内容或关键词..." class="form-input w-full pl-10 bg-white/70">
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="filterFavorites" class="form-checkbox h-5 w-5 text-primary focus:ring-primary-dark border-gray-300 rounded bg-white/70">
+                                    <label for="filterFavorites" class="ml-2 text-sm font-medium text-gray-700">只显示收藏</label>
+                                </div>
+                                <div class="relative">
+                                    <label for="sortTalkTracks" class="sr-only">排序方式</label>
+                                    <select id="sortTalkTracks" class="form-input bg-white/70 appearance-none pl-3 pr-10 py-2 text-sm">
+                                        <option value="date_desc" selected>创建日期 (新到旧)</option>
+                                        <option value="date_asc">创建日期 (旧到新)</option>
+                                        <option value="title_asc">标题 (A-Z)</option>
+                                        <option value="title_desc">标题 (Z-A)</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-chevron-down text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div id="talkTracksContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             <!-- Talk track cards will be dynamically injected here -->
                         </div>
@@ -71,31 +103,32 @@
                         <aside class="w-full sm:w-1/3 md:w-1/4 glass-effect p-4 border-r border-gray-200/50 overflow-y-auto">
                             <h3 class="text-xl font-semibold text-gray-800 mb-4">聊天客户</h3>
                             <ul id="customerList" class="space-y-2">
-                                <li class="p-3 rounded-lg glass-effect hover:bg-primary-light/50 cursor-pointer transition-all duration-200 ease-in-out" data-customer="Customer A"><i class="fas fa-user-astronaut mr-2 text-primary"></i>Customer A</li>
-                                <li class="p-3 rounded-lg glass-effect hover:bg-primary-light/50 cursor-pointer transition-all duration-200 ease-in-out" data-customer="Customer B"><i class="fas fa-user-ninja mr-2 text-accent"></i>Customer B</li>
-                                <li class="p-3 rounded-lg glass-effect hover:bg-primary-light/50 cursor-pointer transition-all duration-200 ease-in-out" data-customer="Customer C"><i class="fas fa-user-tie mr-2 text-green-500"></i>Customer C</li>
+                                <li class="customer-list-item p-3 rounded-lg glass-effect hover:bg-primary-light/50 cursor-pointer transition-all duration-200 ease-in-out flex items-center" data-customer="Customer A"><i class="fas fa-user-astronaut mr-3 text-primary text-lg"></i>Customer A</li>
+                                <li class="customer-list-item p-3 rounded-lg glass-effect hover:bg-primary-light/50 cursor-pointer transition-all duration-200 ease-in-out flex items-center" data-customer="Customer B"><i class="fas fa-user-ninja mr-3 text-accent text-lg"></i>Customer B</li>
+                                <li class="customer-list-item p-3 rounded-lg glass-effect hover:bg-primary-light/50 cursor-pointer transition-all duration-200 ease-in-out flex items-center" data-customer="Customer C"><i class="fas fa-user-tie mr-3 text-green-500 text-lg"></i>Customer C</li>
                             </ul>
                         </aside>
 
                         <!-- Chat Conversation Panel (Right) -->
-                        <section class="flex-1 flex flex-col bg-white/30 backdrop-filter backdrop-blur-sm">
-                            <div id="chatHeader" class="p-4 border-b border-primary-light/50 bg-white/10">
+                        <section class="flex-1 flex flex-col bg-white/30 backdrop-filter backdrop-blur-sm border-l border-white/20">
+                            <div id="chatHeader" class="p-4 border-b border-primary-light/50 bg-white/10 flex items-center space-x-3">
+                                <i id="currentChatCustomerIcon" class="fas fa-user-astronaut text-primary text-xl"></i>
                                 <h4 id="currentChatCustomerName" class="font-semibold text-gray-700 text-lg">Customer A</h4>
                             </div>
-                            <div id="chatMessages" class="flex-1 p-4 space-y-4 overflow-y-auto">
+                            <div id="chatMessages" class="flex-1 p-4 space-y-4 overflow-y-auto custom-scrollbar">
                                 <!-- Messages will appear here -->
                             </div>
                             <div class="p-4 bg-white/10 border-t border-primary-light/50">
-                                <div class="flex items-center space-x-2">
-                                    <input type="text" id="chatInput" class="form-input flex-1 rounded-full focus:ring-primary-dark focus:border-primary-dark" placeholder="输入消息...">
-                                    <button id="sendChatMessageBtn" class="btn-primary p-3 rounded-full shadow-md hover:shadow-lg">
-                                        <i class="fas fa-paper-plane"></i>
+                                <div class="flex items-center space-x-3">
+                                    <input type="text" id="chatInput" class="form-input flex-1 rounded-full focus:ring-primary-dark focus:border-primary-dark bg-white/90" placeholder="输入消息...">
+                                    <button id="sendChatMessageBtn" class="btn-primary p-3 rounded-full shadow-md hover:shadow-lg transition-all duration-150">
+                                        <i class="fas fa-paper-plane text-lg"></i>
                                     </button>
                                     <div class="relative">
-                                        <button id="selectTalkTrackChatBtn" class="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full shadow-md hover:shadow-lg">
-                                            <i class="fas fa-comment-dots"></i>
+                                        <button id="selectTalkTrackChatBtn" class="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full shadow-md hover:shadow-lg transition-all duration-150">
+                                            <i class="fas fa-comment-dots text-lg"></i>
                                         </button>
-                                        <div id="chatTalkTrackDropdown" class="absolute bottom-full right-0 mb-2 w-72 glass-effect p-2 shadow-xl hidden overflow-y-auto max-h-60 z-20">
+                                        <div id="chatTalkTrackDropdown" class="absolute bottom-full right-0 mb-2 w-72 glass-effect p-2 shadow-xl hidden overflow-y-auto max-h-60 z-20 custom-scrollbar">
                                             <!-- Talk tracks will be populated here by JS -->
                                         </div>
                                     </div>
@@ -109,30 +142,44 @@
                 <div id="dataAnalysisView" class="hidden">
                     <div class="container mx-auto">
                         <h2 class="text-2xl font-semibold text-gray-700 mb-6">数据洞察</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                            <div class="glass-effect p-6 text-center">
-                                <h4 class="text-lg font-semibold text-gray-600 mb-2">总话术数</h4>
+                        <!-- Key Metrics Display - Updated to 2x3 grid for more metrics -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                            <div class="glass-effect p-6 text-center rounded-xl">
+                                <h4 class="text-lg font-semibold text-gray-600 mb-2 flex items-center justify-center"><i class="fas fa-list-ol mr-2 text-blue-500"></i>总话术数</h4>
                                 <p id="metricTotalTalkTracks" class="text-4xl font-bold text-primary-darker">0</p>
                             </div>
-                            <div class="glass-effect p-6 text-center">
-                                <h4 class="text-lg font-semibold text-gray-600 mb-2">常用话术</h4>
+                            <div class="glass-effect p-6 text-center rounded-xl">
+                                <h4 class="text-lg font-semibold text-gray-600 mb-2 flex items-center justify-center"><i class="fas fa-heart mr-2 text-pink-500"></i>常用话术</h4>
                                 <p id="metricFavoriteTalkTracks" class="text-4xl font-bold text-pink-500">0</p>
                             </div>
-                            <div class="glass-effect p-6 text-center">
-                                <h4 class="text-lg font-semibold text-gray-600 mb-2">本月新增 (示例)</h4>
+                            <div class="glass-effect p-6 text-center rounded-xl">
+                                <h4 class="text-lg font-semibold text-gray-600 mb-2 flex items-center justify-center"><i class="fas fa-calendar-plus mr-2 text-green-500"></i>本月新增</h4>
                                 <p id="metricAddedThisMonth" class="text-4xl font-bold text-green-600">0</p>
                             </div>
-                        </div>
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div class="glass-effect p-6 min-h-[20rem] flex flex-col items-center justify-center">
-                                <h4 class="text-lg font-semibold text-gray-600 mb-4 text-center">转化率趋势分析</h4>
-                                <i class="fas fa-chart-area text-6xl text-gray-400 mb-4"></i>
-                                <p class="text-gray-500">图表占位符</p>
+                            <div class="glass-effect p-6 text-center rounded-xl">
+                                <h4 class="text-lg font-semibold text-gray-600 mb-2 flex items-center justify-center"><i class="fas fa-tags mr-2 text-indigo-500"></i>平均关键词数</h4>
+                                <p id="metricAvgKeywords" class="text-4xl font-bold text-indigo-500">0</p>
                             </div>
-                            <div class="glass-effect p-6 min-h-[20rem] flex flex-col items-center justify-center">
+                            <div class="glass-effect p-6 text-center rounded-xl">
+                                <h4 class="text-lg font-semibold text-gray-600 mb-2 flex items-center justify-center"><i class="fas fa-star-half-alt mr-2 text-yellow-500"></i>收藏话术占比</h4>
+                                <p id="metricPercentFavorited" class="text-4xl font-bold text-yellow-500">0%</p>
+                            </div>
+                             <div class="glass-effect p-6 text-center rounded-xl">
+                                <h4 class="text-lg font-semibold text-gray-600 mb-2 flex items-center justify-center"><i class="fas fa-eye mr-2 text-teal-500"></i>待定义指标</h4>
+                                <p id="metricPlaceholder" class="text-4xl font-bold text-teal-500">N/A</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="glass-effect p-6 min-h-[20rem] flex flex-col items-center justify-center rounded-xl">
+                                <h4 class="text-lg font-semibold text-gray-600 mb-4 text-center">转化率趋势分析</h4>
+                                <i class="fas fa-chart-line text-6xl text-gray-400 mb-4"></i>
+                                <p class="text-gray-500">图表即将上线</p>
+                            </div>
+                            <div class="glass-effect p-6 min-h-[20rem] flex flex-col items-center justify-center rounded-xl">
                                 <h4 class="text-lg font-semibold text-gray-600 mb-4 text-center">话术使用效果</h4>
                                  <i class="fas fa-tasks text-6xl text-gray-400 mb-4"></i>
-                                <p class="text-gray-500">图表占位符</p>
+                                <p class="text-gray-500">图表敬请期待</p>
                             </div>
                         </div>
                     </div>
@@ -143,7 +190,7 @@
 
     <!-- Add/Edit Talk Track Modal -->
     <div id="talkTrackModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-filter backdrop-blur-sm flex items-center justify-center p-4 hidden modal-transition modal-hidden z-50">
-        <div class="glass-effect p-6 sm:p-8 rounded-xl shadow-xl w-full max-w-lg transform transition-all">
+        <div class="glass-effect p-6 sm:p-8 rounded-xl shadow-xl w-full max-w-lg transform transition-all"> <!-- Added rounded-xl -->
             <div class="flex justify-between items-center mb-6">
                 <h2 id="modalTitle" class="text-2xl font-semibold text-gray-700">添加新话术</h2>
                 <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700 transition-colors">
@@ -157,7 +204,7 @@
                 </div>
                 <div class="mb-4">
                     <label for="trackContent" class="block text-sm font-medium text-gray-600 mb-1">内容</label>
-                    <textarea id="trackContent" name="trackContent" rows="5" class="form-textarea w-full bg-white/70" required></textarea>
+                    <textarea id="trackContent" name="trackContent" rows="5" class="form-textarea w-full bg-white/70 custom-scrollbar" required></textarea>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div>
